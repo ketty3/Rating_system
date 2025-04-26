@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Рейтинг студентов | {% block title %}{% endblock %}</title>
+    {% load static %}
+    <link href="{% static 'main/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'main/css/dashboard.css' %}" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+    <div class="container">
+        <a class="navbar-brand" href="{% url 'dashboard' %}">Рейтинг студентов</a>
+
+        <div class="navbar-nav ms-auto">
+            {% if user.is_authenticated %}
+                <span class="nav-item me-3 text-light">
+                    {{ user.get_full_name }}
+                </span>
+                <a class="nav-link" href="{% url 'logout' %}">Выйти</a>
+            {% else %}
+                <a class="nav-link" href="{% url 'login' %}">Войти</a>
+            {% endif %}
+        </div>
+    </div>
+</nav>
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+    <script src="{% static 'main/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>

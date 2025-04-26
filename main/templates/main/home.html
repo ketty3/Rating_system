@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <title>Мой сайт</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f9;
+        }
+        .header {
+            background: #333;
+            color: white;
+            padding: 10px 20px;
+            margin-bottom: 20px;
+        }
+    </style>
+    {% load static %}
+<link rel="stylesheet" href="{% static 'main/style.css' %}">
+</head>
+<body>
+    <div class="header">
+        <h1>Добро пожаловать на мой сайт!</h1>
+    </div>
+    <p>Это главная страница моего Django-сайта.</p>
+
+
+<div class="articles">
+    {% for article in articles %}
+    <div class="article">
+        <h3>{{ article.title }}</h3>
+        <p>{{ article.content|truncatewords:30 }}</p>
+        <small>{{ article.created_at }}</small>
+    </div>
+    {% endfor %}
+
+</div>
+</body>
+</html>
