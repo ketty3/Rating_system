@@ -1,20 +1,113 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Авторизация</title>
+    <style>
+      body {
+          background-color: #fff;
+          font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 100vh;
+          margin: 0;
+      }
+
+      .row.justify-content-center {
+          width: 100%;
+          max-width: 400px;
+          margin: 0 auto;
+      }
+
+      .card {
+          border: none;
+          border-radius: 12px;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+          width: 100%;
+          padding: 30px;
+          text-align: center;
+      }
+
+      .card-header {
+          border: none;
+          background: transparent;
+          padding: 0;
+      }
+
+      .card-header h3 {
+          color: #007bff;
+          font-size: 24px;
+          margin-bottom: 10px;
+          font-weight: normal;
+      }
+
+      .card-header p {
+          color: #555;
+          font-size: 14px;
+          margin-bottom: 20px;
+      }
+
+      .alert {
+          border-radius: 8px;
+          font-size: 14px;
+          margin-bottom: 20px;
+      }
+
+      .alert-danger {
+          background-color: #ffebee;
+          color: #c62828;
+          border: 1px solid #ef9a9a;
+      }
+
+      .form-control {
+          width: 100%;
+          padding: 14px 15px;
+
+          margin-bottom: 15px;
+          border: 1px solid #007bff;
+          border-radius: 8px;
+          font-size: 14px;
+          outline: none;
+          box-sizing: border-box;
+          transition: border-color 0.3s;
+      }
+
+      .form-control:focus {
+          border-color: #339dff;
+      }
+
+      .btn-primary {
+          width: 100%;
+          padding: 14px;
+          background-color: #007bff;
+          color: #fff;
+          border: none;
+          border-radius: 8px;
+          font-size: 16px;
+          cursor: pointer;
+          transition: background-color 0.3s;
+      }
+
+      .btn-primary:hover {
+          background-color: #339dff;
+      }
+
+      .form-label {
+          display: none; /* Скрываем лейблы как в первом варианте */
+      }
+    </style>
 </head>
 <body>
-{% extends 'main/base.html' %}
-
-{% block title %}Вход в систему{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="text-center">Вход в систему рейтинга</h3>
+        <div class="card p-4">
+            <div class="card-header text-center">
+                <h3>Добро пожаловать в систему рейтинга!</h3>
+                <p>Пожалуйста, войдите в аккаунт!</p>
             </div>
             <div class="card-body">
                 {% if form.errors %}
@@ -27,11 +120,11 @@
                     {% csrf_token %}
                     <div class="mb-3">
                         <label for="id_username" class="form-label">Имя пользователя</label>
-                        <input type="text" name="username" class="form-control" id="id_username" required>
+                        <input type="text" name="username" class="form-control" id="id_username" placeholder="Login" required>
                     </div>
                     <div class="mb-3">
                         <label for="id_password" class="form-label">Пароль</label>
-                        <input type="password" name="password" class="form-control" id="id_password" required>
+                        <input type="password" name="password" class="form-control" id="id_password" placeholder="Password" required>
                     </div>
                     <button type="submit" class="btn btn-primary w-100">Войти</button>
                 </form>

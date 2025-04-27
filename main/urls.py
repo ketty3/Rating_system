@@ -6,6 +6,3 @@ urlpatterns = [
     path('', views.dashboard, name='dashboard'),
     path('article/<int:article_id>/', views.article_detail, name='article_detail'),
 ]
-
-
-
