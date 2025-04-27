@@ -3,6 +3,8 @@ from django.shortcuts import render
 
 # Create your views here.
 from django.shortcuts import render
+from django.contrib.auth import logout
+from django.shortcuts import redirect
 
 def home_page(request):
     return render(request, 'main/home.html')
@@ -31,3 +33,5 @@ from django.contrib.auth.decorators import login_required
 @login_required
 def dashboard(request):
     ...
+
+
