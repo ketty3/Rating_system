@@ -1,33 +1,135 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Рейтинг студентов | {% block title %}{% endblock %}</title>
-    {% load static %}
-    <link href="{% static 'main/css/bootstrap.min.css' %}" rel="stylesheet">
-    <link href="{% static 'main/css/dashboard.css' %}" rel="stylesheet">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>{% block title %}Основная страница{% endblock %}</title>
+<style>
+  /* Общие стили */
+  body {
+    margin: 0;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background-color: #fff;
+    color: #333;
+  }
+
+  /* Шапка */
+  .header {
+    background-color: #3399ff;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+
+  .header h1 {
+    margin: 0;
+    font-size: 24px;
+    color: #fff;
+  }
+
+  .exit-link {
+    font-size: 14px;
+    color: #fff;
+    text-decoration: underline;
+    cursor: pointer;
+    transition: color 0.3s;
+  }
+
+  .exit-link:hover {
+    color: #e0e0e0;
+  }
+
+  /* Обертка страницы */
+  .container {
+    display: flex;
+    height: calc(100vh - 70px); /* Высота минус высота шапки */
+  }
+
+  /* Боковое меню */
+  .sidebar {
+    width: 220px;
+    background-color: #3399ff;
+    border-right: 1px solid #ccc;
+    padding: 20px 10px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border-radius: 0 10px 10px 0;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+  }
+
+  .menu-item {
+    padding: 12px 20px;
+    background-color: #4cabff;
+    color: #fff;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+  }
+
+  .menu-item:hover {
+    background-color: #338acc;
+    transform: translateY(-2px);
+  }
+
+  /* Основной контент */
+  .main {
+    flex: 1;
+    padding: 30px;
+  }
+
+  /* Заголовок внутри контента */
+  .main h2 {
+    margin-top: 0;
+    font-size: 28px;
+    color: #007bff;
+    margin-bottom: 20px;
+  }
+
+  /* Текст */
+  .text {
+    font-size: 18px;
+    line-height: 1.6;
+  }
+</style>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
-    <div class="container">
-        <a class="navbar-brand" href="{% url 'dashboard' %}">Рейтинг студентов</a>
 
-        <div class="navbar-nav ms-auto">
-            {% if user.is_authenticated %}
-                <span class="nav-item me-3 text-light">
-                    {{ user.get_full_name }}
-                </span>
-                <a class="nav-link" href="{% url 'logout' %}">Выйти</a>
-            {% else %}
-                <a class="nav-link" href="{% url 'login' %}">Войти</a>
-            {% endif %}
-        </div>
-    </div>
-</nav>
-    <div class="container">
-        {% block content %}{% endblock %}
-    </div>
-    <script src="{% static 'main/js/bootstrap.bundle.min.js' %}"></script>
+<!-- Шапка -->
+<div class="header">
+  {% if user.is_authenticated %}
+    <h1>Добро пожаловать, {{ user.get_full_name|default:user.username }}!</h1>
+    <a href="{% url 'logout' %}" class="exit-link" onclick="return confirm('Вы уверены, что хотите выйти?')">Выход</a>
+  {% else %}
+    <h1>Добро пожаловать!</h1>
+    <a href="{% url 'login' %}" class="exit-link">Войти</a>
+  {% endif %}
+</div>
+
+<!-- Основная обертка -->
+<div class="container">
+  <!-- Левое меню -->
+  <div class="sidebar">
+    {% block sidebar %}
+      <div class="menu-item">Новости</div>
+      <div class="menu-item">Личный кабинет</div>
+    {% endblock %}
+  </div>
+
+  <!-- Основной контент -->
+  <div class="main">
+    {% block content %}
+      <h2>Рейтинг по учебе:</h2>
+      <div class="text">
+        <p>Внеучебная деятельность</p>
+      </div>
+    {% endblock %}
+  </div>
+</div>
+
 </body>
 </html>

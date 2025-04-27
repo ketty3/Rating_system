@@ -100,10 +100,15 @@
 <body>
 
 <!-- Шапка -->
-<div class="header">
+{% if user.is_authenticated %}
+  <!-- Показываем для авторизованных -->
   <h1>Добро пожаловать, {{ user.get_full_name|default:user.username }}!</h1>
-  <a href="{% url 'logout' %}" class="exit-link" onclick="return confirm('Вы уверены, что хотите выйти?')">Выход</a>
-</div>
+  <a href="{% url 'logout' %}" class="exit-link">Выход</a>
+{% else %}
+  <!-- Показываем для неавторизованных -->
+  <h1>Добро пожаловать!</h1>
+  <a href="{% url 'login' %}" class="exit-link">Войти</a>
+{% endif %}
 
 <!-- Основная обертка -->
 <div class="container">
