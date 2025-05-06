@@ -4,6 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Основная страница</title>
+
 <style>
   /* Общие стили */
   body {
@@ -44,8 +45,10 @@
   /* Обертка страницы */
   .container {
     display: flex;
-    height: calc(100vh - 70px); /* Высота минус высота шапки */
+    min-height: calc(100vh - 70px); /* Высота минус высота шапки */
+      height: auto;
   }
+
 
   /* Боковое меню */
   .sidebar {
@@ -59,18 +62,28 @@
     gap: 10px;
     border-radius: 0 10px 10px 0;
     box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+      height: auto;
+      min-height: min-content;
   }
-
+/* кнопки бокового меню */
   .menu-item {
     padding: 12px 20px;
     background-color: #4cabff;
-    color: #fff;
+    color: #fff ;
+      text-decoration: none;
     border-radius: 6px;
     font-weight: 600;
     cursor: pointer;
     transition: background-color 0.3s, transform 0.2s;
   }
-
+  /* кнопки бокового меню, если они ссылки*/
+.menu-item a {
+  color: #fff !important;
+  text-decoration: none;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
   .menu-item:hover {
     background-color: #338acc;
     transform: translateY(-2px);
@@ -100,22 +113,36 @@
 <body>
 
 <!-- Шапка -->
-{% if user.is_authenticated %}
-  <!-- Показываем для авторизованных -->
-  <h1>Добро пожаловать, {{ user.get_full_name|default:user.username }}!</h1>
-  <a href="{% url 'logout' %}" class="exit-link">Выход</a>
-{% else %}
-  <!-- Показываем для неавторизованных -->
-  <h1>Добро пожаловать!</h1>
-  <a href="{% url 'login' %}" class="exit-link">Войти</a>
-{% endif %}
+<div class="header">
+  {% if user.is_authenticated %}
+    <h1>Добро пожаловать, {{ user.get_full_name|default:user.username }}!</h1>
+      <form method="post" action="{% url 'logout' %}">
+    {% csrf_token %}
+    <button type="submit"  onclick="return confirm('Вы уверены, что хотите выйти?')">Выйти</button>
+</form>
+
+  {% else %}
+    <h1>Добро пожаловать!</h1>
+    <a href="{% url 'login' %}" class="exit-link">Войти</a>
+  {% endif %}
+</div>
 
 <!-- Основная обертка -->
 <div class="container">
   <!-- Левое меню -->
   <div class="sidebar">
-    <div class="menu-item">Новости</div>
-    <div class="menu-item">Личный кабинет</div>
+      {% if user.profile.role == 'ST' %}
+          <div class="menu-item"><a href="{% url 'news' %}">Новости</a></div>
+        <div class="menu-item"><a href="{% url 'dashboard' %}">Личный кабинет</a></div>
+        <div class="menu-item"><a href="{% url 'study' %}">Учеба</a></div>
+        <div class="menu-item"><a href="{% url 'events' %}">Мероприятия</a></div>
+        <div class="menu-item"><a href="#">Магазин</a></div>
+        <div class="menu-item"><a href="#">История</a></div>
+       {% elif user.profile.role == 'TE' %}
+          <div class="menu-item">Новости</div>
+          <div class="menu-item">Личный кабинет</div>
+
+      {% endif %}
   </div>
 
   <!-- Основной контент -->

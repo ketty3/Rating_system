@@ -4,6 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>{% block title %}Основная страница{% endblock %}</title>
+
 <style>
   /* Общие стили */
   body {
@@ -103,7 +104,11 @@
 <div class="header">
   {% if user.is_authenticated %}
     <h1>Добро пожаловать, {{ user.get_full_name|default:user.username }}!</h1>
-    <a href="{% url 'logout' %}" class="exit-link" onclick="return confirm('Вы уверены, что хотите выйти?')">Выход</a>
+      <form method="post" action="{% url 'logout' %}">
+    {% csrf_token %}
+    <button type="submit"  onclick="return confirm('Вы уверены, что хотите выйти?')">Выйти</button>
+</form>
+
   {% else %}
     <h1>Добро пожаловать!</h1>
     <a href="{% url 'login' %}" class="exit-link">Войти</a>
@@ -114,20 +119,13 @@
 <div class="container">
   <!-- Левое меню -->
   <div class="sidebar">
-    {% block sidebar %}
-      <div class="menu-item">Новости</div>
-      <div class="menu-item">Личный кабинет</div>
-    {% endblock %}
+    <div class="menu-item">Новости</div>
+    <div class="menu-item">Личный кабинет</div>
   </div>
 
   <!-- Основной контент -->
   <div class="main">
-    {% block content %}
-      <h2>Рейтинг по учебе:</h2>
-      <div class="text">
-        <p>Внеучебная деятельность</p>
-      </div>
-    {% endblock %}
+    {% block content %}{% endblock %}
   </div>
 </div>
 

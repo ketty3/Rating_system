@@ -33,5 +33,12 @@ from django.contrib.auth.decorators import login_required
 @login_required
 def dashboard(request):
     ...
+def news(request):
+    return render(request, 'main/news.html')
 
+def study(request):
+    return render(request, 'curricular/study.html')
+
+def events(request):
+    return render(request, 'extracurricular/events.html')
 
