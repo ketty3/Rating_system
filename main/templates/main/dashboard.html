@@ -20,10 +20,10 @@
         <div class="card-body">
             <div class="row">
                 <div class="col-md-6">
-                    <p><strong>ФИО:</strong> {{ profile.get_full_name }}</p>
-                    <p><strong>Роль:</strong> {{ profile.get_role_display }}</p>
-                    {% if profile.role == 'ST' %}
-                    <p><strong>Группа:</strong> {{ profile.group }}</p>
+                    <p><strong>ФИО:</strong> {{ user.profile.get_full_name }}</p>
+                    <p><strong>Роль:</strong> {{ user.profile.get_role_display }}</p>
+                    {% if user.profile.role == 'ST' %}
+                    <p><strong>Группа:</strong> {{ user.profile.group }}</p>
                     {% endif %}
                 </div>
                 <div class="col-md-6">
@@ -35,53 +35,7 @@
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-md-6">
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h3>Учебный рейтинг</h3>
-                </div>
-                <div class="card-body">
-                    <h4 class="display-4">{{ profile.academic_rating|floatformat:2 }}</h4>
-                    <div class="d-flex align-items-center mt-3 {% if academic_trend == 'up' %}text-success{% else %}text-danger{% endif %}">
-                        {% if academic_trend == 'up' %}
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-arrow-up" viewBox="0 0 16 16">
-                            <path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z"/>
-                        </svg>
-                        {% else %}
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-arrow-down" viewBox="0 0 16 16">
-                            <path fill-rule="evenodd" d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z"/>
-                        </svg>
-                        {% endif %}
-                        <span class="ms-2">{{ profile.academic_change|floatformat:2 }}%</span>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <div class="col-md-6">
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h3>Внеучебный рейтинг</h3>
-                </div>
-                <div class="card-body">
-                    <h4 class="display-4">{{ profile.activity_rating|floatformat:2 }}</h4>
-                    <div class="d-flex align-items-center mt-3 {% if activity_trend == 'up' %}text-success{% else %}text-danger{% endif %}">
-                        {% if activity_trend == 'up' %}
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-arrow-up" viewBox="0 0 16 16">
-                            <path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z"/>
-                        </svg>
-                        {% else %}
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-arrow-down" viewBox="0 0 16 16">
-                            <path fill-rule="evenodd" d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z"/>
-                        </svg>
-                        {% endif %}
-                        <span class="ms-2">{{ profile.activity_change|floatformat:2 }}%</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
 {% endblock %}
 </body>

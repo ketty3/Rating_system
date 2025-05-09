@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>{% block title %}Основная страница{% endblock %}</title>
+<title>{% block title %}Шаблон{% endblock %}</title>
 
 <style>
-  /* Общие стили */
+   /* Общие стили */
   body {
     margin: 0;
     font-family: 'Helvetica Neue', Arial, sans-serif;
@@ -45,8 +45,10 @@
   /* Обертка страницы */
   .container {
     display: flex;
-    height: calc(100vh - 70px); /* Высота минус высота шапки */
+    min-height: calc(100vh - 70px); /* Высота минус высота шапки */
+      height: auto;
   }
+
 
   /* Боковое меню */
   .sidebar {
@@ -60,18 +62,28 @@
     gap: 10px;
     border-radius: 0 10px 10px 0;
     box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+      height: auto;
+      min-height: min-content;
   }
-
+/* кнопки бокового меню */
   .menu-item {
     padding: 12px 20px;
     background-color: #4cabff;
-    color: #fff;
+    color: #fff ;
+      text-decoration: none;
     border-radius: 6px;
     font-weight: 600;
     cursor: pointer;
     transition: background-color 0.3s, transform 0.2s;
   }
-
+  /* кнопки бокового меню, если они ссылки*/
+.menu-item a {
+  color: #fff !important;
+  text-decoration: none;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
   .menu-item:hover {
     background-color: #338acc;
     transform: translateY(-2px);
@@ -115,12 +127,33 @@
   {% endif %}
 </div>
 
+
 <!-- Основная обертка -->
 <div class="container">
   <!-- Левое меню -->
   <div class="sidebar">
-    <div class="menu-item">Новости</div>
-    <div class="menu-item">Личный кабинет</div>
+        {% if user.profile.role == 'AD' %}
+            <div class="menu-item"><a href="{% url 'news' %}">Новости</a></div>
+        <div class="menu-item"><a href="{% url 'dashboard' %}">Личный кабинет</a></div>
+        <div class="menu-item"><a href="{% url 'study' %}">Учеба</a></div>
+             <div class="menu-item"><a href="{% url 'subjects' %}">Предметы</a></div>
+        <div class="menu-item"><a href="{% url 'events' %}">Мероприятия</a></div>
+            <div class="menu-item"><a href="{% url 'registrations' %}">Регистрации</a></div>
+        <div class="menu-item"><a href="{% url 'shop' %}">Магазин</a></div>
+            <div class="menu-item"><a href="{% url 'orders' %}">Заказы</a></div>
+            <div class="menu-item"><a href="{% url 'operations' %}">Финансовые операции</a></div>
+      {% elif user.profile.role == 'ST' %}
+          <div class="menu-item"><a href="{% url 'news' %}">Новости</a></div>
+        <div class="menu-item"><a href="{% url 'dashboard' %}">Личный кабинет</a></div>
+        <div class="menu-item"><a href="{% url 'study' %}">Учеба</a></div>
+        <div class="menu-item"><a href="{% url 'events' %}">Мероприятия</a></div>
+        <div class="menu-item"><a href="{% url 'shop' %}">Магазин</a></div>
+        <div class="menu-item"><a href="#">История</a></div>
+       {% elif user.profile.role == 'TE' %}
+          <div class="menu-item">Новости</div>
+          <div class="menu-item">Личный кабинет</div>
+
+      {% endif %}
   </div>
 
   <!-- Основной контент -->
