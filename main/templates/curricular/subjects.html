@@ -4,40 +4,66 @@
 {% block content %}
 <div class="container mt-5">
     <h2>Предметы, которые вы ведете</h2>
-    <p>Выберите семестр и предмет, чтобы посмотреть группы:</p>
+    <p>Выберите семестр и предмет, чтобы посмотреть студентов и выставить оценки:</p>
 
     {% if semesters %}
         <div class="accordion" id="semestersAccordion">
             {% for semester, subjects in semesters.items %}
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="heading{{ semester }}">
-                        <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                                 data-bs-target="#collapse{{ semester }}" aria-expanded="false"
                                 aria-controls="collapse{{ semester }}">
                             Семестр {{ semester }}
                         </button>
                     </h2>
+
                     <div id="collapse{{ semester }}" class="accordion-collapse collapse"
                          aria-labelledby="heading{{ semester }}"
                          data-bs-parent="#semestersAccordion">
                         <div class="accordion-body">
-                            <ul class="list-group">
-                                {% for subject in subjects %}
-                                    <li class="list-group-item">
-                                        <button class="btn btn-link text-decoration-none w-100 text-start"
+                            {% for item in subjects %}
+                                <div class="card mb-4">
+                                    <div class="card-header bg-light">
+                                        <strong>{{ item.subject.subject_name }}</strong>
+                                        <button class="btn btn-sm btn-secondary float-end" type="button"
                                                 data-bs-toggle="collapse"
-                                                data-bs-target="#groups_{{ subject.id }}">
-                                            {{ subject.subject_name }}
+                                                data-bs-target="#students_{{ item.subject.subject_id }}">
+                                            Показать студентов
                                         </button>
-                                        <div id="groups_{{ subject.id }}" class="collapse mt-2 ps-4">
-                                            <strong>Группа:</strong>
-                                            <ul>
-                                                <li>{{ subject.group_id.group_name }}</li>
-                                            </ul>
-                                        </div>
-                                    </li>
-                                {% endfor %}
-                            </ul>
+                                    </div>
+
+                                    <div id="students_{{ item.subject.subject_id }}" class="collapse ps-3 pe-3 pt-3 pb-3">
+                                        <form method="post" action="{% url 'save_grades' subject_id=item.subject.subject_id %}">
+                                            {% csrf_token %}
+                                            <table class="table table-bordered table-hover mb-3">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Студент</th>
+                                                        <th>Текущая оценка</th>
+                                                        <th>Выставить оценку</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for student_info in item.students_with_grades %}
+                                                        <tr>
+                                                            <td>{{ student_info.student.get_full_name }}</td>
+                                                            <td>{{ student_info.grade|default:"—" }}</td>
+                                                            <td>
+                                                                <input type="number" step="0.1" min="0" max="5"
+                                                                       name="grade_{{ student_info.student_id }}"
+                                                                       value="{{ student_info.grade|default_if_none:'' }}"
+                                                                       class="form-control form-control-sm">
+                                                            </td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                            <button type="submit" class="btn btn-success btn-sm">Сохранить оценки</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            {% endfor %}
                         </div>
                     </div>
                 </div>

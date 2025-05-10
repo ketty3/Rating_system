@@ -11,10 +11,11 @@ urlpatterns = [
     path('events/', views.events, name='events'),
     path('shop/', views.shop, name='shop'),
     path('orders/', views.orders, name='orders'),
-    path('subjects/', views.subjects, name='subjects'),
+    path('subjects/', views.subjects_taught, name='subjects'),
     path('registrations/', views.registrations, name='registrations'),
     path('operations/', views.operations, name='operations'),
     path('article/<int:article_id>/', views.article_detail, name='article_detail'),
+    path('subjects/save_grades/<int:subject_id>/', views.save_grades, name='save_grades'),
 
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
