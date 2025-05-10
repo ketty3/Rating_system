@@ -1,42 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-{% extends 'main/base.html' %}
-
-{% block title %}Мой профиль{% endblock %}
+{% extends "main/base.html" %}
+{% block title %}Рейтинги{% endblock %}
 
 {% block content %}
-<div class="dashboard mt-4">
-    <h1 class="mb-4">Мой профиль</h1>
-
-    <div class="card mb-4">
-        <div class="card-header">
-            <h2>Основная информация</h2>
-        </div>
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-6">
-                    <p><strong>ФИО:</strong> {{ user.profile.get_full_name }}</p>
-                    <p><strong>Роль:</strong> {{ user.profile.get_role_display }}</p>
-                    {% if user.profile.role == 'ST' %}
-                    <p><strong>Группа:</strong> {{ user.profile.group }}</p>
-                    {% endif %}
-                </div>
-                <div class="col-md-6">
-                    <div class="text-end">
-                        <span class="badge bg-primary">Логин: {{ user.username }}</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-</div>
+    <h2>Рейтинг по учебе:</h2>
+    <p>Внеучебная деятельность</p>
 {% endblock %}
-</body>
-</html>

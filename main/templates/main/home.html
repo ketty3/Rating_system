@@ -1,7 +1,89 @@
 {% extends "main/base.html" %}
-{% block title %}Основная страница{% endblock %}
-
+{% block title %}Личный кабинет{% endblock %}
 {% block content %}
-    <h2>Рейтинг по учебе:</h2>
-    <p>Внеучебная деятельность</p>
+<div class="dashboard mt-4">
+    <h1 class="mb-4">Мой профиль</h1>
+
+    <!-- Основная информация -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h2>Основная информация</h2>
+        </div>
+        <div class="card-body">
+            <div class="row align-items-center">
+                <!-- Фото профиля -->
+                <div class="col-md-3 text-center mb-3 mb-md-0">
+                    {% if profile.user_photo %}
+                        <img src="{{ profile.user_photo.url }}" alt="Фото профиля"
+                             style="max-width: 150px; border: 2px solid black; border-radius: 10px;">
+                    {% else %}
+                        <div style="width: 150px; height: 150px; border: 2px solid black; border-radius: 10px;"
+                             class="d-flex align-items-center justify-content-center bg-light text-secondary">
+                            Нет фото
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Основные данные -->
+                <div class="col-md-6">
+                    <p><strong>ФИО:</strong> {{ profile.get_full_name }}</p>
+                    <p><strong>Роль:</strong> {{ profile.get_role_display }}</p>
+                    {% if profile.role == 'ST' %}
+                        <p><strong>Группа:</strong> {{ profile.group }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Кнопка редактирования -->
+                <div class="col-md-3 text-md-end text-center">
+                    <button class="btn btn-primary" id="editButton">Редактировать</button>
+                </div>
+            </div>
+
+            <!-- Форма редактирования (скрыта по умолчанию) -->
+            <form method="post" enctype="multipart/form-data" id="editForm" style="display: none;">
+                {% csrf_token %}
+                <div class="row">
+                    <!-- ФИО -->
+                    <div class="col-md-6">
+                        <label for="id_middle_name" class="form-label">Отчество:</label>
+                        <input type="text" class="form-control" name="middle_name" value="{{ profile.middle_name }}">
+                    </div>
+
+                    <!-- Группа (если студент) -->
+                    {% if profile.role == 'ST' %}
+                    <div class="col-md-6">
+                        <label for="id_group" class="form-label">Группа:</label>
+                        <input type="text" class="form-control" name="group" value="{{ profile.group }}">
+                    </div>
+                    {% endif %}
+
+                    <!-- Фото профиля -->
+                    <div class="col-md-12 mt-3">
+                        {{ form.user_photo.label_tag }}
+                        {{ form.user_photo }}
+                    </div>
+
+                    <!-- Кнопка сохранения -->
+                    <div class="col-md-12 mt-3">
+                        <button type="submit" class="btn btn-success">Сохранить изменения</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Скрипт для показа/скрытия формы -->
+<script>
+    document.getElementById('editButton').addEventListener('click', function () {
+        var editForm = document.getElementById('editForm');
+        if (editForm.style.display === 'none') {
+            editForm.style.display = 'block';
+            this.textContent = 'Отменить';
+        } else {
+            editForm.style.display = 'none';
+            this.textContent = 'Редактировать';
+        }
+    });
+</script>
 {% endblock %}
