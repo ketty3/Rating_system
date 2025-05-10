@@ -1,4 +1,3 @@
-
 from django.shortcuts import render
 
 # Create your views here.
@@ -8,7 +7,12 @@ from django.shortcuts import render, get_object_or_404
 from django.shortcuts import redirect
 from .models import  Profile
 from .forms import ProfileForm
-from .models import Article
+from .models import Article,Subjects
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import Article, Profile
+from .forms import ProfileForm
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 def home_page(request):
     articles = Article.objects.all()
     profile = get_object_or_404(Profile, user=request.user)
@@ -48,21 +52,22 @@ from django.contrib.auth.decorators import login_required
 @login_required
 def profile_view(request):
     profile = get_object_or_404(Profile, user=request.user)
+    articles = Article.objects.all()  # Если нужно отображать статьи
 
     if request.method == 'POST':
         form = ProfileForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
             form.save()
-            return redirect('home')  # перезагрузка страницы
-    else:
-        form = ProfileForm(instance=profile)
+            messages.success(request, 'Профиль успешно обновлён!')
+            return redirect('profile_view')
+        else:
+            form = ProfileForm(instance=profile)
 
-    context = {
-        'profile': profile,
-        'form': form,
-    }
-
-    return render(request, 'main/profile.html', context)
+            return render(request, 'main/home.html', {
+                'profile': profile,
+                'form': form,
+                'articles': articles
+        })
 
 
 def news(request):
@@ -82,6 +87,18 @@ def orders(request):
 def operations(request):
     return render(request, 'main/operations.html')
 
+@login_required
+def subjects(request):
+    # Получаем все предметы, где текущий пользователь — преподаватель
+    subjects = Subjects.objects.filter(teacher_id=request.user).select_related('group_id').order_by('semestr_id')
 
-
-
+    # Группируем предметы по семестрам
+    semesters = {}
+    for subject in subjects:
+        semester_number = subject.semestr_id
+        if semester_number not in semesters:
+            semesters[semester_number] = []
+        semesters[semester_number].append(subject)
+    return render(request, 'curricular/subjects.html', {
+        'semesters': semesters
+    })

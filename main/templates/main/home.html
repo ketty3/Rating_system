@@ -1,5 +1,6 @@
 {% extends "main/base.html" %}
 {% block title %}Личный кабинет{% endblock %}
+
 {% block content %}
 <div class="dashboard mt-4">
     <h1 class="mb-4">Мой профиль</h1>
@@ -43,28 +44,33 @@
             <form method="post" enctype="multipart/form-data" id="editForm" style="display: none;">
                 {% csrf_token %}
                 <div class="row">
-                    <!-- ФИО -->
-                    <div class="col-md-6">
-                        <label for="id_middle_name" class="form-label">Отчество:</label>
-                        <input type="text" class="form-control" name="middle_name" value="{{ profile.middle_name }}">
+                    <div class="col-md-6 mb-3">
+                        {{ form.middle_name.label_tag }}
+                        {{ form.middle_name }}
+                        {% if form.middle_name.errors %}
+                            <div class="text-danger">{{ form.middle_name.errors.as_text }}</div>
+                        {% endif %}
                     </div>
 
-                    <!-- Группа (если студент) -->
                     {% if profile.role == 'ST' %}
-                    <div class="col-md-6">
-                        <label for="id_group" class="form-label">Группа:</label>
-                        <input type="text" class="form-control" name="group" value="{{ profile.group }}">
-                    </div>
+                        <div class="col-md-6 mb-3">
+                            {{ form.group.label_tag }}
+                            {{ form.group }}
+                            {% if form.group.errors %}
+                                <div class="text-danger">{{ form.group.errors.as_text }}</div>
+                            {% endif %}
+                        </div>
                     {% endif %}
 
-                    <!-- Фото профиля -->
-                    <div class="col-md-12 mt-3">
+                    <div class="col-md-12 mb-3">
                         {{ form.user_photo.label_tag }}
                         {{ form.user_photo }}
+                        {% if form.user_photo.errors %}
+                            <div class="text-danger">{{ form.user_photo.errors.as_text }}</div>
+                        {% endif %}
                     </div>
 
-                    <!-- Кнопка сохранения -->
-                    <div class="col-md-12 mt-3">
+                    <div class="col-md-12">
                         <button type="submit" class="btn btn-success">Сохранить изменения</button>
                     </div>
                 </div>

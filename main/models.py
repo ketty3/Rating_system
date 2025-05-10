@@ -20,6 +20,7 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     middle_name = models.CharField(max_length=50, verbose_name='Отчество', blank=True)
     role = models.CharField(max_length=2, choices=ROLES, verbose_name='Роль')
+    group = models.ForeignKey('Groups', on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Группа')
     user_photo = models.ImageField(upload_to='profile_photos/', blank=True, null=True, verbose_name='Фото профиля')
 
     def __str__(self):
