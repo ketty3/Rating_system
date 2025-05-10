@@ -1,6 +1,6 @@
 # views.py
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Article, Profile, Subjects, StudentGroupMembership, Grades, Events
+from .models import Article, Profile, Subjects, StudentGroupMembership, Grades, Events, EventRoles,Registrations
 from .forms import ProfileForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -127,16 +127,60 @@ def study(request):
 
 @login_required
 def events(request):
-    # Получаем все мероприятия, где доступность True
+    profile = request.user.profile
     events_list = Events.objects.filter(available=True)
 
-    return render(request, 'extracurricular/events.html', {
-        'events': events_list
-    })
+    # Добавляем информацию о регистрации для каждого мероприятия
+    for event in events_list:
+        event.is_registered = event.registrations.filter(user=request.user).exists()
 
+    return render(request, 'extracurricular/events.html', {
+        'events': events_list,
+        'profile': profile
+    })
 
 def registrations(request):
     return render(request, 'extracurricular/registrations.html')
+@login_required
+def register_event(request, event_id):
+    profile = request.user.profile
+
+    # Проверяем, что пользователь — студент
+    if profile.role != 'ST':
+        messages.error(request, "Регистрация доступна только студентам.")
+        return redirect('events')
+
+    # Получаем мероприятие
+    event = get_object_or_404(Events, event_id=event_id)
+
+    # Проверяем, зарегистрирован ли уже пользователь
+    already_registered = Registrations.objects.filter(user=request.user, event=event).exists()
+
+    if already_registered:
+        messages.warning(request, "Вы уже зарегистрированы на это мероприятие.")
+        return redirect('events')
+
+    # Получаем роль "Участник" по названию
+    role_participant = EventRoles.objects.filter(e_role_name='Участник').first()
+
+    if not role_participant:
+        # Если роли "Участник" нет — создаём её
+        role_participant, created = EventRoles.objects.get_or_create(
+            e_role_name='Участник',
+            defaults={'points': 0}
+        )
+
+    # Создаём регистрацию
+    Registrations.objects.create(
+        event=event,
+        user=request.user,
+        e_role_id=role_participant,
+        attendance=False,
+        available=True
+    )
+
+    messages.success(request, "Вы успешно зарегистрировались на мероприятие!")
+    return redirect('events')
 
 
 def shop(request):
@@ -149,3 +193,4 @@ def orders(request):
 
 def operations(request):
     return render(request, 'main/operations.html')
+

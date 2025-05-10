@@ -13,7 +13,7 @@
                 <div class="col">
                     <div class="card h-100 shadow-sm border-0 rounded-3">
                         {% if event.event_photo %}
-                            <img src="{{ event.event_photo.url }}" class="card-img-top" alt="Фото мероприятия"
+                            <img src="{{ event.event_photo.url }}" class="card-img-top"
                                  style="height: 200px; object-fit: cover;">
                         {% else %}
                             <div class="card-img-top bg-light d-flex align-items-center justify-content-center text-muted"
@@ -24,16 +24,27 @@
 
                         <div class="card-body">
                             <h5 class="card-title">{{ event.event_name }}</h5>
-                            <p class="card-text mb-2"><strong>Дата:</strong> {{ event.date|date:"d.m.Y" }}</p>
-                            <p class="card-text mb-2"><strong>Время:</strong> {{ event.time|time:"H:i" }}</p>
-                            <p class="card-text mb-2"><strong>Место:</strong> {{ event.place }}</p>
+                            <p class="card-text mb-1"><strong>Дата:</strong> {{ event.date|date:"d.m.Y" }}</p>
+                            <p class="card-text mb-1"><strong>Время:</strong> {{ event.time|time:"H:i" }}</p>
+                            <p class="card-text mb-1"><strong>Место:</strong> {{ event.place }}</p>
                             {% if event.notes %}
                                 <p class="card-text text-muted"><small>{{ event.notes|truncatechars:100 }}</small></p>
                             {% endif %}
                         </div>
 
                         <div class="card-footer bg-white border-0">
-                            <a href="#" class="btn btn-primary w-100">Зарегистрироваться</a>
+    {% if profile.role == 'ST' %}
+        {% if event.is_registered %}
+            <button class="btn btn-success w-100" disabled>Вы зарегистрированы</button>
+        {% else %}
+            <a href="{% url 'register_event' event_id=event.event_id %}" class="btn btn-primary w-100">
+                Зарегистрироваться
+            </a>
+        {% endif %}
+    {% else %}
+        <button class="btn btn-secondary w-100" disabled>Только для студентов</button>
+    {% endif %}
+
                         </div>
                     </div>
                 </div>
