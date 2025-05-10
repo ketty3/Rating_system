@@ -125,18 +125,58 @@ def study(request):
     return render(request, 'curricular/study.html')
 
 
+# views.py
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import Events, Registrations
+from .forms import EventForm
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+
+
 @login_required
 def events(request):
     profile = request.user.profile
-    events_list = Events.objects.filter(available=True)
+    all_events = Events.objects.all()
 
-    # Добавляем информацию о регистрации для каждого мероприятия
-    for event in events_list:
+    # Переменные для формы создания
+    form_create = EventForm(prefix='create')
+    form_edit = None
+    event_to_edit = None
+
+    # Только для TE и MA показываем форму создания
+    if profile.role in ['TE', 'MA']:
+        if request.method == 'POST':
+            if 'create_event' in request.POST:
+                form_create = EventForm(request.POST, request.FILES, prefix='create')
+                if form_create.is_valid():
+                    form_create.save()
+                    messages.success(request, 'Мероприятие создано!')
+                    return redirect('events')
+
+            elif 'edit_event' in request.POST:
+                event_id = request.POST.get('event_id')
+                event_to_edit = get_object_or_404(Events, event_id=event_id)
+                form_edit = EventForm(request.POST, request.FILES, instance=event_to_edit, prefix='edit')
+
+                if form_edit.is_valid():
+                    form_edit.save()
+                    messages.success(request, 'Мероприятие обновлено!')
+                    return redirect('events')
+
+        # Если GET и роль TE/MA — просто передаём пустую форму
+        else:
+            form_create = EventForm(prefix='create')
+
+    # Для шаблона: добавляем is_registered
+    for event in all_events:
         event.is_registered = event.registrations.filter(user=request.user).exists()
 
     return render(request, 'extracurricular/events.html', {
-        'events': events_list,
-        'profile': profile
+        'events': all_events,
+        'profile': profile,
+        'form_create': form_create,
+        'form_edit': form_edit,
+        'event_to_edit': event_to_edit,
     })
 
 def registrations(request):
