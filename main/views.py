@@ -1,6 +1,6 @@
 # views.py
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Article, Profile, Subjects, StudentGroupMembership, Grades
+from .models import Article, Profile, Subjects, StudentGroupMembership, Grades, Events
 from .forms import ProfileForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -125,8 +125,14 @@ def study(request):
     return render(request, 'curricular/study.html')
 
 
+@login_required
 def events(request):
-    return render(request, 'extracurricular/events.html')
+    # Получаем все мероприятия, где доступность True
+    events_list = Events.objects.filter(available=True)
+
+    return render(request, 'extracurricular/events.html', {
+        'events': events_list
+    })
 
 
 def registrations(request):
