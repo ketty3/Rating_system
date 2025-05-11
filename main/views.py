@@ -163,12 +163,34 @@ def news(request):
     return render(request, 'main/news.html')
 
 
+@login_required
 def study(request):
-    return render(request, 'curricular/study.html')
+    profile = request.user.profile
+
+    # Только для студентов
+    if profile.role != 'ST':
+        return render(request, 'curricular/study.html', {
+            'error': "Доступ только для студентов"
+        })
+
+    # Получаем все оценки студента
+    grades = Grades.objects.filter(student_id=request.user).select_related('subject_id')
+
+    # Подготовка данных
+    subjects_with_grades = []
+    for grade in grades:
+        subjects_with_grades.append({
+            'subject_name': grade.subject_id.subject_name,
+            'grade': grade.grade,
+            'subject_type': grade.subject_id.subject_type,
+            'teacher': grade.subject_id.teacher_id.get_full_name(),
+        })
+
+    return render(request, 'curricular/study.html', {
+        'subjects_with_grades': subjects_with_grades
+    })
 
 
-# views.py
-from django.shortcuts import render, get_object_or_404, redirect
 from .models import Events, Registrations
 from .forms import EventForm
 from django.contrib.auth.decorators import login_required
@@ -221,8 +243,47 @@ def events(request):
         'event_to_edit': event_to_edit,
     })
 
+# views.py
+
+from .models import Registrations, EventRoles
+from .forms import RegistrationFormSet  # создадим ниже
+from django.forms import modelformset_factory
+from django.contrib import messages
+
+
+# Формсет для редактирования регистраций
+@login_required
 def registrations(request):
-    return render(request, 'extracurricular/registrations.html')
+    profile = request.user.profile
+
+    if profile.role not in ['TE', 'MA', 'AD']:
+        return render(request, 'extracurricular/registrations.html', {
+            'error': "Доступ запрещён"
+        })
+
+    # Получаем все регистрации
+    registrations_list = Registrations.objects.select_related('user', 'event', 'e_role_id').all()
+
+    # Создаём формсет
+    RegistrationFormSet = modelformset_factory(
+        Registrations,
+        fields=('user', 'event', 'e_role_id', 'attendance'),
+        extra=0
+    )
+
+    if request.method == 'POST':
+        formset = RegistrationFormSet(request.POST, queryset=registrations_list)
+        if formset.is_valid():
+            formset.save()
+            messages.success(request, "Изменения сохранены")
+            return redirect('registrations')
+    else:
+        formset = RegistrationFormSet(queryset=registrations_list)
+
+    return render(request, 'extracurricular/registrations.html', {
+        'formset': formset
+    })
+
 @login_required
 def register_event(request, event_id):
     profile = request.user.profile

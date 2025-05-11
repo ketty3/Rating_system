@@ -1,6 +1,43 @@
 {% extends "main/base.html" %}
-    {% block title %}Регистрации{% endblock %}
+{% block title %}Регистрации{% endblock %}
+
 {% block content %}
+<div class="container mt-5">
     <h2>Регистрации на мероприятия</h2>
-    <p>список</p>
+    <p>Список всех регистраций</p>
+
+    {% if error %}
+        <div class="alert alert-danger">{{ error }}</div>
+    {% else %}
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-success mb-3">Сохранить изменения</button>
+
+            <table class="table table-bordered table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Пользователь</th>
+                        <th>Мероприятие</th>
+                        <th>Роль</th>
+                        <th>Присутствие</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{ formset.management_form }}
+                    {% for form in formset %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ form.instance.user.get_full_name }}</td>
+                            <td>{{ form.instance.event.event_name }}</td>
+                            <td>{{ form.e_role_id }}</td>
+                            <td>{{ form.attendance }}</td>
+                            {{ form.id }} {# Скрытый input с ID #}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </form>
+    {% endif %}
+</div>
 {% endblock %}

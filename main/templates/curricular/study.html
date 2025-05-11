@@ -1,6 +1,40 @@
 {% extends "main/base.html" %}
-    {% block title %}Учеба{% endblock %}
+{% block title %}Учеба{% endblock %}
+
 {% block content %}
+<div class="container mt-5">
     <h2>Моя учеба</h2>
-    <p>предметы и оценки</p>
+    <p>Предметы и оценки:</p>
+
+    {% if error %}
+        <div class="alert alert-danger">{{ error }}</div>
+    {% else %}
+        {% if subjects_with_grades %}
+            <table class="table table-bordered table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Предмет</th>
+                        <th>Тип занятия</th>
+                        <th>Преподаватель</th>
+                        <th>Оценка</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in subjects_with_grades %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ item.subject_name }}</td>
+                            <td>{{ item.subject_type }}</td>
+                            <td>{{ item.teacher }}</td>
+                            <td>{{ item.grade }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="alert alert-info">Нет оценок</div>
+        {% endif %}
+    {% endif %}
+</div>
 {% endblock %}
