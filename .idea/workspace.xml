@@ -7,10 +7,8 @@
     <list default="true" id="8e1eb239-c4f5-41f9-91c8-cd52cdbe400e" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/db.sqlite3" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/forms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/curricular/study.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/curricular/study.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/extracurricular/registrations.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/extracurricular/registrations.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/base.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/templates/main/dashboard.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/dashboard.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -121,7 +119,7 @@
       <workItem from="1746730271015" duration="1217000" />
       <workItem from="1746810740009" duration="21363000" />
       <workItem from="1746886393020" duration="1207000" />
-      <workItem from="1746889614076" duration="23513000" />
+      <workItem from="1746889614076" duration="25610000" />
     </task>
     <servers />
   </component>

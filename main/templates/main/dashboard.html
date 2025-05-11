@@ -5,36 +5,26 @@
 <div class="container mt-5">
     <h2>Рейтинги</h2>
 
-    <!-- Блок с рейтингом текущего пользователя -->
+    <!-- Учебный рейтинг -->
     {% if profile.role == 'ST' %}
         <div class="card mb-4 shadow-sm border-0 rounded-3">
             <div class="card-body text-center">
                 <h4>Ваш рейтинг</h4>
-                <p><strong>Место:</strong>
-                    {% if user_rank %}
-                        {{ user_rank }}
-                    {% else %}
-                        Не определено
-                    {% endif %}
-                </p>
-                <p><strong>Средний балл:</strong>
-                    {% if avg_grade_user %}
-                        {{ avg_grade_user|floatformat:2 }}
-                    {% else %}
-                        0.00
-                    {% endif %}
-                </p>
+                <p><strong>Место по оценкам:</strong> {{ user_rank_grades|default:"—" }}</p>
+                <p><strong>Средний балл:</strong> {{ avg_grade_user|floatformat:2 }}</p>
+                <p><strong>Баллы за внеучебную активность:</strong> {{ extra_points_user|floatformat:2 }}</p>
+                <p><strong>Место по внеучебке:</strong> {{ user_extra_rank|default:"—" }}</p>
             </div>
         </div>
     {% endif %}
 
-    <!-- Таблица топ-10 студентов -->
-    <div class="card shadow-sm border-0 rounded-3">
+    <!-- Таблица топ-10 по оценкам -->
+    <div class="card shadow-sm border-0 rounded-3 mb-4">
         <div class="card-header bg-primary text-white">
-            <h4 class="mb-0">Топ 10 студентов</h4>
+            <h4 class="mb-0">Топ 10 по учебе</h4>
         </div>
         <div class="card-body">
-            {% if students_top %}
+            {% if students_top_grades %}
                 <table class="table table-hover">
                     <thead>
                         <tr>
@@ -44,7 +34,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for student in students_top %}
+                        {% for student in students_top_grades %}
                             <tr>
                                 <td>{{ forloop.counter }}</td>
                                 <td>{{ student.full_name }}</td>
@@ -54,7 +44,38 @@
                     </tbody>
                 </table>
             {% else %}
-                <p>Нет данных о рейтинге студентов.</p>
+                <p>Нет данных</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Таблица топ-10 по внеучебке -->
+    <div class="card shadow-sm border-0 rounded-3">
+        <div class="card-header bg-success text-white">
+            <h4 class="mb-0">Топ 10 по внеучебной активности</h4>
+        </div>
+        <div class="card-body">
+            {% if students_top_extra %}
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>ФИО</th>
+                            <th>Баллы за внеучебку</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for student in students_top_extra %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ student.full_name }}</td>
+                                <td>{{ student.extra_points }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>Нет данных о внеучебных баллах</p>
             {% endif %}
         </div>
     </div>

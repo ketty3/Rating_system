@@ -1,6 +1,7 @@
 # views.py
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Article, Profile, Subjects, StudentGroupMembership, Grades, Events, EventRoles,Registrations
+from .models import Article, Profile, Subjects, StudentGroupMembership, Grades, Events, EventRoles, Registrations, \
+    MoneyOperations
 from .forms import ProfileForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -30,53 +31,91 @@ def article_detail(request, article_id):
     article = Article.objects.get(id=article_id)
     return render(request, 'main/article_detail.html', {'article': article})
 
-
 @login_required
 def dashboard(request):
     profile = request.user.profile
 
-    # Получаем средний балл текущего пользователя
+    # Получаем средний балл по учебе
     avg_grade_user = get_student_avg_grade(request.user)
 
-    # Получаем топ 10 студентов по среднему баллу
-    top_students = (
+    # Получаем внеучебные баллы
+    extra_points_user = get_extra_points(request.user)
+
+    # Получаем топ по оценкам
+    top_students_grades = (
         Grades.objects.values('student_id')
         .annotate(avg_grade=Avg('grade'))
         .order_by('-avg_grade')[:10]
     )
 
-    # Добавляем данные о пользователях
-    students_with_data = []
-    for item in top_students:
+    students_top_grades = []
+    for item in top_students_grades:
         user = User.objects.get(id=item['student_id'])
         student_profile = Profile.objects.get(user=user)
-        students_with_data.append({
-            'user': user,
+        students_top_grades.append({
             'full_name': student_profile.get_full_name,
             'avg_grade': round(item['avg_grade'], 2) if item['avg_grade'] else 0.0,
         })
 
-    # Находим место пользователя в рейтинге
+    # Определяем место пользователя по оценкам
     all_grades = (
         Grades.objects.values('student_id')
         .annotate(avg_grade=Avg('grade'))
         .order_by('-avg_grade')
     )
 
-    user_rank = None
+    user_rank_grades = None
     for idx, entry in enumerate(all_grades, start=1):
         if entry['student_id'] == request.user.id:
-            user_rank = idx
+            user_rank_grades = idx
+            break
+
+    # Получаем топ по внеклассным баллам
+    top_students_extra = (
+        MoneyOperations.objects.values('user')
+        .annotate(extra_points=Sum('quantity'))
+        .filter(extra_points__gt=0)
+        .order_by('-extra_points')[:10]
+    )
+
+    students_top_extra = []
+    for item in top_students_extra:
+        try:
+            user = User.objects.get(id=item['user'])
+            student_profile = Profile.objects.get(user=user)
+            students_top_extra.append({
+                'full_name': student_profile.get_full_name,
+                'extra_points': round(float(item['extra_points']), 2)
+            })
+        except User.DoesNotExist:
+            continue
+
+    # Определяем место пользователя во внеклассном рейтинге
+    all_extra_points = (
+        MoneyOperations.objects.values('user')
+        .annotate(extra_points=Sum('quantity'))
+        .filter(extra_points__gt=0)
+        .order_by('-extra_points')
+    )
+
+    user_extra_rank = None
+    for idx, entry in enumerate(all_extra_points, start=1):
+        if entry['user'] == request.user.id:
+            user_extra_rank = idx
             break
 
     context = {
         'profile': profile,
         'avg_grade_user': avg_grade_user,
-        'students_top': students_with_data,
-        'user_rank': user_rank or '-',  # Если пользователь не найден в рейтинге
+        'extra_points_user': extra_points_user,
+        'students_top_grades': students_top_grades,
+        'students_top_extra': students_top_extra,
+        'user_rank_grades': user_rank_grades,  # Теперь эта переменная определена
+        'user_extra_rank': user_extra_rank or '-',
     }
 
     return render(request, 'main/dashboard.html', context)
+
 
 @login_required
 def profile_view(request):
@@ -342,3 +381,17 @@ from django.db.models import Avg
 def get_student_avg_grade(user):
     return Grades.objects.filter(student_id=user).aggregate(avg_grade=Avg('grade'))['avg_grade']
 
+# views.py
+from django.db.models import Sum, Q
+from datetime import timedelta
+import datetime
+
+def get_extra_points(user):
+    # Подсчитываем сумму всех "баллов" за последние 30 дней
+    total_points = MoneyOperations.objects.filter(
+        user=user,
+        transaction_date__gte=datetime.date.today() - timedelta(days=30),
+        quantity__gt=0
+    ).aggregate(total=Sum('quantity'))['total']
+
+    return total_points or 0
