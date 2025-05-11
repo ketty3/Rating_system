@@ -2,6 +2,61 @@
 {% block title %}Рейтинги{% endblock %}
 
 {% block content %}
-    <h2>Рейтинг по учебе:</h2>
-    <p>Внеучебная деятельность</p>
+<div class="container mt-5">
+    <h2>Рейтинги</h2>
+
+    <!-- Блок с рейтингом текущего пользователя -->
+    {% if profile.role == 'ST' %}
+        <div class="card mb-4 shadow-sm border-0 rounded-3">
+            <div class="card-body text-center">
+                <h4>Ваш рейтинг</h4>
+                <p><strong>Место:</strong>
+                    {% if user_rank %}
+                        {{ user_rank }}
+                    {% else %}
+                        Не определено
+                    {% endif %}
+                </p>
+                <p><strong>Средний балл:</strong>
+                    {% if avg_grade_user %}
+                        {{ avg_grade_user|floatformat:2 }}
+                    {% else %}
+                        0.00
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Таблица топ-10 студентов -->
+    <div class="card shadow-sm border-0 rounded-3">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Топ 10 студентов</h4>
+        </div>
+        <div class="card-body">
+            {% if students_top %}
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>ФИО</th>
+                            <th>Средний балл</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for student in students_top %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ student.full_name }}</td>
+                                <td>{{ student.avg_grade }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>Нет данных о рейтинге студентов.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
 {% endblock %}

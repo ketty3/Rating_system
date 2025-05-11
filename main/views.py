@@ -3,6 +3,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .models import Article, Profile, Subjects, StudentGroupMembership, Grades, Events, EventRoles,Registrations
 from .forms import ProfileForm
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.contrib import messages
 
 
@@ -33,8 +34,49 @@ def article_detail(request, article_id):
 @login_required
 def dashboard(request):
     profile = request.user.profile
-    return render(request, 'main/dashboard.html', {'profile': profile})
 
+    # Получаем средний балл текущего пользователя
+    avg_grade_user = get_student_avg_grade(request.user)
+
+    # Получаем топ 10 студентов по среднему баллу
+    top_students = (
+        Grades.objects.values('student_id')
+        .annotate(avg_grade=Avg('grade'))
+        .order_by('-avg_grade')[:10]
+    )
+
+    # Добавляем данные о пользователях
+    students_with_data = []
+    for item in top_students:
+        user = User.objects.get(id=item['student_id'])
+        student_profile = Profile.objects.get(user=user)
+        students_with_data.append({
+            'user': user,
+            'full_name': student_profile.get_full_name,
+            'avg_grade': round(item['avg_grade'], 2) if item['avg_grade'] else 0.0,
+        })
+
+    # Находим место пользователя в рейтинге
+    all_grades = (
+        Grades.objects.values('student_id')
+        .annotate(avg_grade=Avg('grade'))
+        .order_by('-avg_grade')
+    )
+
+    user_rank = None
+    for idx, entry in enumerate(all_grades, start=1):
+        if entry['student_id'] == request.user.id:
+            user_rank = idx
+            break
+
+    context = {
+        'profile': profile,
+        'avg_grade_user': avg_grade_user,
+        'students_top': students_with_data,
+        'user_rank': user_rank or '-',  # Если пользователь не найден в рейтинге
+    }
+
+    return render(request, 'main/dashboard.html', context)
 
 @login_required
 def profile_view(request):
@@ -233,4 +275,9 @@ def orders(request):
 
 def operations(request):
     return render(request, 'main/operations.html')
+
+from django.db.models import Avg
+
+def get_student_avg_grade(user):
+    return Grades.objects.filter(student_id=user).aggregate(avg_grade=Avg('grade'))['avg_grade']
 
