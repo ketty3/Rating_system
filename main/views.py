@@ -285,7 +285,8 @@ def events(request):
 # views.py
 
 from .models import Registrations, EventRoles
-from .forms import RegistrationFormSet  # создадим ниже
+
+from .forms import ProfileForm, RegistrationForm
 from django.forms import modelformset_factory
 from django.contrib import messages
 
@@ -306,15 +307,16 @@ def registrations(request):
     # Создаём формсет
     RegistrationFormSet = modelformset_factory(
         Registrations,
-        fields=('user', 'event', 'e_role_id', 'attendance'),
+        form=RegistrationForm,
         extra=0
     )
 
     if request.method == 'POST':
         formset = RegistrationFormSet(request.POST, queryset=registrations_list)
+
         if formset.is_valid():
             formset.save()
-            messages.success(request, "Изменения сохранены")
+            messages.success(request, "Изменения успешно сохранены")
             return redirect('registrations')
     else:
         formset = RegistrationFormSet(queryset=registrations_list)
@@ -322,7 +324,6 @@ def registrations(request):
     return render(request, 'extracurricular/registrations.html', {
         'formset': formset
     })
-
 @login_required
 def register_event(request, event_id):
     profile = request.user.profile

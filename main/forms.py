@@ -22,21 +22,21 @@ class EventForm(forms.ModelForm):
 
 from .models import Registrations, EventRoles
 
-# Форма для редактирования одной регистрации
+
 class RegistrationForm(forms.ModelForm):
     class Meta:
         model = Registrations
         fields = ['user', 'event', 'e_role_id', 'attendance']
         widgets = {
-            'user': forms.Select(attrs={'readonly': True}),
-            'event': forms.Select(attrs={'readonly': True}),
+            'user': forms.HiddenInput(),
+            'event': forms.HiddenInput(),
             'e_role_id': forms.Select(),
             'attendance': forms.CheckboxInput(),
         }
 
-# Формсет — набор форм для всех записей
-RegistrationFormSet = forms.modelformset_factory(
-    Registrations,
-    form=RegistrationForm,
-    extra=0
-)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Убедимся, что поля user и event заполнены
+        if self.instance:
+            self.initial['user'] = self.instance.user
+            self.initial['event'] = self.instance.event
