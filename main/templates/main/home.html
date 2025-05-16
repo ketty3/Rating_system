@@ -38,11 +38,25 @@
                 <div class="col-md-3 text-md-end text-center">
                     <button class="btn btn-primary" id="editButton">Редактировать</button>
                 </div>
+                {% if messages %}
+                    <div class="alert alert-success" role="alert">
+                        {% for message in messages %}
+                            {{ message }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
             </div>
 
             <!-- Форма редактирования (скрыта по умолчанию) -->
             <form method="post" enctype="multipart/form-data" id="editForm" style="display: none;">
                 {% csrf_token %}
+                <!-- Скрытое поле role -->
+                <input type="hidden" name="role" value="{{ profile.role }}">
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         {{ form.middle_name.label_tag }}

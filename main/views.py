@@ -10,21 +10,25 @@ from django.contrib import messages
 
 @login_required
 def home_page(request):
-    articles = Article.objects.all()
     profile = get_object_or_404(Profile, user=request.user)
 
     if request.method == 'POST':
         form = ProfileForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
             form.save()
+            messages.success(request, "Профиль успешно обновлён")
+            return redirect('home')
+        else:
+            print("Ошибки формы:", form.errors)
     else:
         form = ProfileForm(instance=profile)
 
     return render(request, 'main/home.html', {
-        'articles': articles,
         'profile': profile,
         'form': form,
     })
+
+
 
 
 def article_detail(request, article_id):
