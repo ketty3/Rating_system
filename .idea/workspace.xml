@@ -7,8 +7,9 @@
     <list default="true" id="8e1eb239-c4f5-41f9-91c8-cd52cdbe400e" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/db.sqlite3" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/templates/main/home.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/home.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/templates/main/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/main/base.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/templates/shop/shop.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/shop/shop.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -122,7 +123,10 @@
       <workItem from="1746889614076" duration="26644000" />
       <workItem from="1746930490088" duration="14066000" />
       <workItem from="1747146419857" duration="6027000" />
-      <workItem from="1747398314640" duration="1815000" />
+      <workItem from="1747398314640" duration="5313000" />
+      <workItem from="1747539632393" duration="1355000" />
+      <workItem from="1747641946892" duration="698000" />
+      <workItem from="1747650356253" duration="5514000" />
     </task>
     <servers />
   </component>

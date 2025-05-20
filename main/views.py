@@ -1,7 +1,7 @@
 # views.py
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Article, Profile, Subjects, StudentGroupMembership, Grades, Events, EventRoles, Registrations, \
-    MoneyOperations
+    MoneyOperations, Merch
 from .forms import ProfileForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -371,7 +371,29 @@ def register_event(request, event_id):
 
 
 def shop(request):
-    return render(request, 'shop/shop.html')
+    # Получаем все товары
+    merch_items = Merch.objects.all().order_by('merch_name')
+
+    # Для пополнений (положительные суммы)
+    deposits = MoneyOperations.objects.filter(
+        user=request.user,
+        type='Начисление'
+    ).aggregate(total=Sum('quantity'))['total'] or 0
+
+    # Для списаний (отрицательные суммы)
+    withdrawals = MoneyOperations.objects.filter(
+        user=request.user,
+        type='Списание'
+    ).aggregate(total=Sum('quantity'))['total'] or 0
+
+    user_balance = deposits - withdrawals
+
+    context = {
+        'merch_items': merch_items,
+        'user_balance': user_balance
+    }
+
+    return render(request, 'shop/shop.html', context)
 
 
 def orders(request):
