@@ -369,7 +369,7 @@ def register_event(request, event_id):
     messages.success(request, "Вы успешно зарегистрировались на мероприятие!")
     return redirect('events')
 
-
+@login_required
 def shop(request):
     # Получаем все товары
     merch_items = Merch.objects.all().order_by('merch_name')
@@ -400,8 +400,17 @@ def orders(request):
     return render(request, 'shop/orders.html')
 
 
+@login_required
 def operations(request):
-    return render(request, 'main/operations.html')
+    # Получаем все операции текущего пользователя, сортируем по дате (новые сначала)
+    operations = MoneyOperations.objects.filter(
+        user=request.user
+    ).order_by('-transaction_date')
+
+    context = {
+        'operations': operations
+    }
+    return render(request, 'main/operations.html', context)
 
 from django.db.models import Avg
 
