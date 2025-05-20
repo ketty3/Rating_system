@@ -1,6 +1,79 @@
 {% extends "main/base.html" %}
-    {% block title %}Магазин мерча{% endblock %}
+{% block title %}Управление заказами{% endblock %}
+
 {% block content %}
-    <h2>Список заказов</h2>
-    <p>Заказы</p>
+<div class="container mx-auto px-4 py-8">
+    <h2 class="text-3xl font-bold text-blue-800 mb-6">Управление заказами</h2>
+
+    {% if messages %}
+    <div class="mb-4">
+        {% for message in messages %}
+        <div class="p-4 mb-2 rounded {% if message.tags == 'error' %}bg-red-100 text-red-700{% else %}bg-green-100 text-green-700{% endif %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        {{ formset.management_form }}
+
+        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded mb-4">
+            Сохранить изменения
+        </button>
+
+        <div class="overflow-x-auto">
+            <table class="min-w-full bg-white rounded-lg overflow-hidden">
+                <thead class="bg-blue-600 text-white">
+                    <tr>
+                        <th class="py-3 px-4 text-left">ID</th>
+                        <th class="py-3 px-4 text-left">Пользователь</th>
+                        <th class="py-3 px-4 text-left">Товар</th>
+                        <th class="py-3 px-4 text-left">Кол-во</th>
+                        <th class="py-3 px-4 text-left">Сумма</th>
+                        <th class="py-3 px-4 text-left">Дата</th>
+                        <th class="py-3 px-4 text-left">Статус</th>
+                        <th class="py-3 px-4 text-left">Примечания</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    {% for form in formset %}
+                    <tr class="{% if form.instance.status == 'completed' %}bg-green-50{% elif form.instance.status == 'canceled' %}bg-red-50{% else %}hover:bg-blue-50{% endif %}">
+                        <td class="py-3 px-4">{{ form.instance.order_id }}</td>
+                        <td class="py-3 px-4">
+                            {{ form.instance.user.last_name }} {{ form.instance.user.first_name }}
+                        </td>
+                        <td class="py-3 px-4">
+                            <div class="flex items-center">
+                                {% if form.instance.merch.merch_photo %}
+                                <img src="{{ form.instance.merch.merch_photo.url }}" alt="{{ form.instance.merch.merch_name }}"
+                                     class="w-10 h-10 object-cover rounded mr-2">
+                                {% endif %}
+                                {{ form.instance.merch.merch_name }}
+                            </div>
+                        </td>
+                        <td class="py-3 px-4">{{ form.instance.merch_count }}</td>
+                        <td class="py-3 px-4 font-bold">{{ form.instance.order_summa }} б.</td>
+                        <td class="py-3 px-4">{{ form.instance.order_date|date:"d.m.Y H:i" }}</td>
+                        <td class="py-3 px-4">
+                            {{ form.status }}
+                            {{ form.id }}
+                        </td>
+                        <td class="py-3 px-4">
+                            {{ form.notes }}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="py-4 text-center text-gray-500">
+                            Нет заказов
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </form>
+</div>
 {% endblock %}

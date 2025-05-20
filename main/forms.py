@@ -1,5 +1,6 @@
 from django import forms
-from .models import Profile,Events
+from .models import Profile, Events, Orders
+
 
 class ProfileForm(forms.ModelForm):
     class Meta:
@@ -40,3 +41,33 @@ class RegistrationForm(forms.ModelForm):
         if self.instance:
             self.initial['user'] = self.instance.user
             self.initial['event'] = self.instance.event
+
+
+
+
+
+class OrderStatusForm(forms.ModelForm):
+    STATUS_CHOICES = [
+        ('processing', 'В обработке'),
+        ('completed', 'Выполнен'),
+        ('canceled', 'Отменен'),
+    ]
+
+    status = forms.ChoiceField(
+        choices=STATUS_CHOICES,
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+
+    class Meta:
+        model = Orders
+        fields = ['status', 'notes']
+        widgets = {
+            'notes': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
+        }
+
+
+OrderStatusFormSet = forms.modelformset_factory(
+    Orders,
+    form=OrderStatusForm,
+    extra=0
+)

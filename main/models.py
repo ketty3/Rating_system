@@ -99,18 +99,29 @@ class Achievements(models.Model):
         return self.achieve_name
 
 
-# Заказы
 class Orders(models.Model):
+    ORDER_STATUS = (
+        ('processing', 'В обработке'),
+        ('completed', 'Выполнен'),
+        ('canceled', 'Отменен'),
+    )
+
     order_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders', verbose_name='Пользователь')
     order_date = models.DateTimeField(auto_now_add=True, verbose_name='Дата заказа')
     merch = models.ForeignKey('Merch', on_delete=models.CASCADE, related_name='orders', verbose_name='Товар')
     merch_count = models.PositiveIntegerField(verbose_name='Количество товара')
     order_summa = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Сумма заказа')
+    status = models.CharField(max_length=20, choices=ORDER_STATUS, default='processing', verbose_name='Статус')
+    notes = models.TextField(blank=True, null=True, verbose_name='Примечания')
 
     def __str__(self):
         return f"Order #{self.order_id} by {self.user}"
 
+    class Meta:
+        verbose_name = 'Заказ'
+        verbose_name_plural = 'Заказы'
+        ordering = ['-order_date']
 
 # Товары
 class Merch(models.Model):

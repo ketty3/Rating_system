@@ -396,8 +396,36 @@ def shop(request):
     return render(request, 'shop/shop.html', context)
 
 
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib import messages
+from .models import Orders, Merch, Profile
+from .forms import OrderStatusFormSet
+
+
+def is_seller(user):
+    return Profile.objects.filter(user=user, role='PR').exists() or user.is_staff
+
+
+@login_required
+@user_passes_test(is_seller, login_url='/')
 def orders(request):
-    return render(request, 'shop/orders.html')
+    orders = Orders.objects.all().order_by('-order_date')
+
+    if request.method == 'POST':
+        formset = OrderStatusFormSet(request.POST, queryset=orders)
+        if formset.is_valid():
+            formset.save()
+            messages.success(request, 'Статусы заказов успешно обновлены!')
+            return redirect('orders')
+    else:
+        formset = OrderStatusFormSet(queryset=orders)
+
+    context = {
+        'orders': orders,
+        'formset': formset
+    }
+    return render(request, 'shop/orders.html', context)
 
 
 @login_required
